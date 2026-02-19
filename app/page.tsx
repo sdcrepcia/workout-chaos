@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import SpinWheel from "./components/SpinWheel";
 import ExerciseCard from "./components/ExerciseCard";
 import WorkoutLog from "./components/WorkoutLog";
@@ -12,12 +12,12 @@ export type Exercise = {
   reps: string;
 };
 
-
 export default function Home() {
   const [currentExercise, setCurrentExercise] = useState<Exercise | null>(null);
   const [workoutLog, setWorkoutLog] = useState<Exercise[]>([]);
   const [showGrade, setShowGrade] = useState(false);
   const [spinning, setSpinning] = useState(false);
+  const gradeRef = useRef<HTMLDivElement>(null);
 
   const logExercise = () => {
     if (currentExercise) {
@@ -25,6 +25,12 @@ export default function Home() {
       setCurrentExercise(null);
     }
   };
+
+  useEffect(() => {
+    if (showGrade && gradeRef.current) {
+      gradeRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showGrade]);
 
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center p-6 gap-6">
@@ -42,7 +48,9 @@ export default function Home() {
       )}
 
       {showGrade && (
-        <GradeScreen log={workoutLog} onReset={() => { setWorkoutLog([]); setShowGrade(false); }} />
+        <div ref={gradeRef}>
+          <GradeScreen log={workoutLog} onReset={() => { setWorkoutLog([]); setShowGrade(false); }} />
+        </div>
       )}
     </main>
   );
