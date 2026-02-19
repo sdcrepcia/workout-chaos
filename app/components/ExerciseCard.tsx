@@ -4,21 +4,21 @@ import { Exercise } from "../page";
 
 type Props = {
   exercise: Exercise;
+  onLog: () => void;
+  onSkip: () => void;
 };
 
-export default function ExerciseCard({ exercise }: Props) {
+export default function ExerciseCard({ exercise, onLog, onSkip }: Props) {
   const [visible, setVisible] = useState(false);
   const prevNameRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (exercise.name !== prevNameRef.current) {
-      // Reset first so re-triggering animation works on new exercise
       setVisible(false);
       prevNameRef.current = exercise.name;
 
       const timer = setTimeout(() => setVisible(true), 50);
 
-      // Haptic feedback on mobile
       if (navigator.vibrate) {
         navigator.vibrate(80);
       }
@@ -37,9 +37,33 @@ export default function ExerciseCard({ exercise }: Props) {
         {exercise.name}
       </h2>
       <p className="text-gray-300 mt-1 text-sm uppercase tracking-widest">
-        {exercise.muscle}
+        {exercise.target}
       </p>
-      <p className="text-white mt-4 leading-relaxed">{exercise.instructions}</p>
+      {exercise.gifUrl && (
+        <img
+          src={exercise.gifUrl}
+          alt={exercise.name}
+          className="w-full rounded-xl mt-4"
+        />
+      )}
+      {exercise.description && (
+        <p className="text-white mt-4 leading-relaxed">{exercise.description}</p>
+      )}
+      <p className="text-yellow-300 font-bold mt-3">{exercise.reps}</p>
+      <div className="flex gap-3 mt-5">
+        <button
+          onClick={onLog}
+          className="flex-1 bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded-2xl"
+        >
+          ✅ Done
+        </button>
+        <button
+          onClick={onSkip}
+          className="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-2xl"
+        >
+          ⏭️ Skip
+        </button>
+      </div>
     </div>
   );
 }
