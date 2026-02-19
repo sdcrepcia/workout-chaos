@@ -15,7 +15,6 @@ export default function GradeScreen({ log, onReset }: Props) {
 
   useEffect(() => {
     async function fetchGrade() {
-      console.log("fetchGrade called, log:", log);
       try {
         const res = await fetch("/api/grade", {
           method: "POST",
@@ -23,7 +22,6 @@ export default function GradeScreen({ log, onReset }: Props) {
           body: JSON.stringify({ log }),
         });
         const data = await res.json();
-        console.log("Grade data:", data);
         setGrade(data.grade);
         setComment(data.comment);
       } catch (err) {
@@ -40,19 +38,19 @@ export default function GradeScreen({ log, onReset }: Props) {
   const meme = grade ? getMemeForGrade(grade) : null;
 
   return (
-    <div className="w-full max-w-md bg-gray-900 rounded-2xl p-6 flex flex-col items-center gap-4 text-center">
+    <div className="w-full max-w-sm sm:max-w-md bg-gray-900 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 text-center">
       {loading ? (
         <>
-          <p className="text-xl font-bold animate-pulse">⏳ GPT is judging you...</p>
+          <p className="text-lg sm:text-xl font-bold animate-pulse">⏳ GPT is judging you...</p>
           <p className="text-gray-400 text-sm">This may take a second</p>
         </>
       ) : (
         <>
-          <h2 className="text-6xl font-black">{grade}</h2>
+          <h2 className="text-5xl sm:text-6xl font-black">{grade}</h2>
           {meme && (
             <>
-              <img src={meme.gif} alt="reaction meme" className="rounded-xl w-72" />
-              <p className="text-lg font-bold">{meme.caption}</p>
+              <img src={meme.gif} alt="reaction meme" className="rounded-xl w-56 sm:w-72" />
+              <p className="text-base sm:text-lg font-bold">{meme.caption}</p>
             </>
           )}
           {comment && (
@@ -60,7 +58,7 @@ export default function GradeScreen({ log, onReset }: Props) {
           )}
           <button
             onClick={onReset}
-            className="mt-2 w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded-xl"
+            className="mt-2 w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-2 rounded-xl text-sm sm:text-base"
           >
             🔄 Try Again (You Need It)
           </button>
