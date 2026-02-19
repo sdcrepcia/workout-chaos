@@ -6,9 +6,10 @@ import { getMemeForGrade } from "../../lib/memes";
 type Props = {
   log: Exercise[];
   onReset: () => void;
+  onGradeLoaded: () => void;
 };
 
-export default function GradeScreen({ log, onReset }: Props) {
+export default function GradeScreen({ log, onReset, onGradeLoaded }: Props) {
   const [grade, setGrade] = useState<string | null>(null);
   const [comment, setComment] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,6 +31,7 @@ export default function GradeScreen({ log, onReset }: Props) {
         setComment("Something broke. Much like your will to exercise. 💀");
       } finally {
         setLoading(false);
+        onGradeLoaded();
       }
     }
     fetchGrade();

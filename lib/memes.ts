@@ -22,9 +22,9 @@ export const memes: Record<MemeGrade, { gif: string; caption: string }> = {
     caption: "You were distracted by your phone the whole time, weren't you. 😒",
   },
   F: {
-    gif: "https://media.giphy.com/media/1gRR6VIJwHEsFUlEfO/giphy.gif",
-    caption: "The pallbearers are already on their way. Rest in gainz. 💀",
-  },
+  gif: "https://media.giphy.com/media/BczTcb7DAOvqE/giphy.gif",
+  caption: "The pallbearers are already on their way. Rest in gainz. 💀",
+},
 };
 
 export const workoutGifs: Record<string, string[]> = {

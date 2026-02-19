@@ -32,6 +32,12 @@ export default function Home() {
     }
   }, [showGrade]);
 
+  const handleGradeLoaded = () => {
+    setTimeout(() => {
+      gradeRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
   return (
     <main className="min-h-screen bg-gray-950 text-white flex flex-col items-center p-6 gap-6">
       <h1 className="text-4xl font-black tracking-tight mt-4">Workout Chaos</h1>
@@ -49,7 +55,11 @@ export default function Home() {
 
       {showGrade && (
         <div ref={gradeRef}>
-          <GradeScreen log={workoutLog} onReset={() => { setWorkoutLog([]); setShowGrade(false); }} />
+          <GradeScreen
+            log={workoutLog}
+            onReset={() => { setWorkoutLog([]); setShowGrade(false); }}
+            onGradeLoaded={handleGradeLoaded}
+          />
         </div>
       )}
     </main>
