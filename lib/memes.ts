@@ -11,7 +11,7 @@ export const memes: Record<MemeGrade, { gif: string; caption: string }> = {
   },
   B: {
     gif: "https://media.giphy.com/media/l3q2K5jinAlChoCLS/giphy.gif",
-    caption: "Solid workout... but those last two skips tho. None of my business. 🐸☕",
+    caption: "Above average. Like a protein bar — not exciting, but gets the job done. 🍫",
   },
   C: {
     gif: "https://media.giphy.com/media/QMHoU66sBXqqLqYvGO/giphy.gif",
