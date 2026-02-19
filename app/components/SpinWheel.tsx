@@ -1,10 +1,20 @@
 "use client";
+import { useRef, useState } from "react";
 import { Exercise } from "../page";
 
 const MUSCLE_GROUPS = [
   "chest", "back", "shoulders", "upper arms",
   "legs", "core", "cardio"
 ];
+
+function shuffleArray<T>(arr: T[]): T[] {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 type Props = {
   setCurrentExercise: (ex: Exercise | null) => void;
@@ -13,22 +23,46 @@ type Props = {
 };
 
 export default function SpinWheel({ setCurrentExercise, spinning, setSpinning }: Props) {
+  const muscleQueueRef = useRef<string[]>([]);
+  const seenExercisesRef = useRef<Set<string>>(new Set());
+
+  function getNextMuscleGroup(): string {
+    if (muscleQueueRef.current.length === 0) {
+      muscleQueueRef.current = shuffleArray(MUSCLE_GROUPS);
+    }
+    return muscleQueueRef.current.shift()!;
+  }
+
+  async function fetchExercise(muscleGroup: string): Promise<Exercise | null> {
+    const res = await fetch("/api/exercise", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ muscleGroup }),
+    });
+    return res.json();
+  }
 
   async function handleSpin() {
     setSpinning(true);
     setCurrentExercise(null);
 
-    const muscleGroup = MUSCLE_GROUPS[Math.floor(Math.random() * MUSCLE_GROUPS.length)];
-
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
     try {
-      const res = await fetch("/api/exercise", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ muscleGroup }),
-      });
-      const exercise = await res.json();
+      const muscleGroup = getNextMuscleGroup();
+
+      let exercise: Exercise | null = null;
+      let attempts = 0;
+
+      while (attempts < 5) {
+        exercise = await fetchExercise(muscleGroup);
+        if (exercise && !seenExercisesRef.current.has(exercise.name)) {
+          seenExercisesRef.current.add(exercise.name);
+          break;
+        }
+        attempts++;
+      }
+
       setCurrentExercise(exercise);
     } catch (err) {
       console.error("Failed to fetch exercise:", err);
