@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { getWorkoutGif } from "@/lib/memes";
+import OpenAI from "openai";
+
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const MUSCLE_GROUPS = [
   "chest", "back", "shoulders", "upper arms",
@@ -51,15 +54,28 @@ export async function POST(req: Request) {
     const exercises = await exerciseRes.json();
     const random = exercises[Math.floor(Math.random() * exercises.length)];
     const reps = REP_SUGGESTIONS[Math.floor(Math.random() * REP_SUGGESTIONS.length)];
-
     const normalizedBodyPart = BODY_PART_MAP[random.bodyPart] ?? random.bodyPart;
     const gifUrl = getWorkoutGif(normalizedBodyPart);
+
+    const descriptionRes = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: `Give me a 1-2 sentence beginner-friendly description of how to perform the exercise: "${random.name}". Be concise and practical.`,
+        },
+      ],
+      max_tokens: 100,
+    });
+
+    const description = descriptionRes.choices[0].message.content ?? "";
 
     return NextResponse.json({
       name: random.name,
       gifUrl,
       target: normalizedBodyPart,
       reps,
+      description,
     });
 
   } catch (err) {

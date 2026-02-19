@@ -10,6 +10,7 @@ export type Exercise = {
   gifUrl: string | null;
   target: string;
   reps: string;
+  description?: string;
 };
 
 export default function Home() {
